@@ -31,4 +31,27 @@ public class RulePointsDAO {
         rp = em.merge(rp);
         em.remove(rp);
     }
+
+    public Integer calcularPuntos(Integer monto){
+        List<RulePoints> reglas = this.lista();
+
+        Integer montoEquivalencia;
+
+        for (RulePoints regla : reglas){
+            if (regla.getLimiteSuperior() != null) {
+                if (regla.getLimiteInferior() <= monto && regla.getLimiteSuperior() >= monto) {
+                    montoEquivalencia = regla.getEquivalencia();
+                    return monto/montoEquivalencia;
+                }
+            }else{
+                //Si es null el limite superior
+                if(regla.getLimiteInferior() <= monto ){
+                    montoEquivalencia = regla.getEquivalencia();
+                    return monto/montoEquivalencia;
+                }
+            }
+        }
+        //Caso contrario retorna 0
+        return 0;
+    }
 }
