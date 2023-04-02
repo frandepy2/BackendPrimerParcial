@@ -1,5 +1,6 @@
 package py.com.progweb.prueba.rest;
 
+import py.com.progweb.prueba.dto.UsePointsDTO;
 import py.com.progweb.prueba.ejb.PointBagDAO;
 import py.com.progweb.prueba.ejb.PointsUseDAO;
 import py.com.progweb.prueba.model.PointBag;
@@ -24,6 +25,13 @@ public class ServiceRest {
     @Path("/cargar_puntos")
     public Response cargarPuntos(PointBag pointBag){
         this.pointBagDAO.cargarPuntos(pointBag);
+        return Response.ok().build();
+    }
+
+    @POST
+    @Path("/usar_puntos")
+    public Response usarPuntos(UsePointsDTO usePointsDTO){
+        this.pointBagDAO.utilizarPuntos(usePointsDTO);
         return Response.ok().build();
     }
 

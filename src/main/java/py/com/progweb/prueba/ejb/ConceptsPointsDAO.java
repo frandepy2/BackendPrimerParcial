@@ -30,4 +30,10 @@ public class ConceptsPointsDAO {
         cp = em.merge(cp);
         em.remove(cp);
     }
+
+    public ConceptsPoints getConceptsPointsById(Integer id) {
+        Query q = this.em.createQuery("SELECT c FROM ConceptsPoints c WHERE c.id = :idParam");
+        q.setParameter("idParam", id);
+        return (ConceptsPoints) q.getSingleResult();
+    }
 }
