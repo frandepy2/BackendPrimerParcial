@@ -10,6 +10,10 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
+
+import javax.mail.*;
+import javax.mail.internet.*;
 
 @Stateless
 public class PointBagDAO {
@@ -115,6 +119,13 @@ public class PointBagDAO {
                 break;
             }
         }
+
+        /*
+        try {
+            this.sendMail();
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }*/
     }
 
     private List<PointBag> getPointsByCustomerId(Integer customerId) {
@@ -154,5 +165,33 @@ public class PointBagDAO {
         }
         //Caso contrario retorna 0
         return 0;
+    }
+
+    private void sendMail() throws MessagingException{
+        Properties props = new Properties();
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.host", "smtp.live.com");
+        props.put("mail.smtp.port", "587");
+
+        // Crear la sesión
+        Session session = Session.getInstance(props, new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication("javier_lopez-1998@hotmail.com", "jotalopezcaceres1");
+            }
+        });
+
+        // Crear el mensaje
+        Message message = new MimeMessage(session);
+        message.setFrom(new InternetAddress("javier_lopez-1998@hotmail.com"));
+        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse("javierlopez9805@gmail.com"));
+        message.setSubject("Prueba de correo electrónico");
+        message.setText("Este es un mensaje de prueba.");
+
+        // Enviar el mensaje
+        Transport.send(message);
+
+        System.out.println("Mensaje enviado correctamente.");
     }
 }
