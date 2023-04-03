@@ -25,4 +25,10 @@ public class PointsBagRest {
         return Response.ok(pointBagDAO.listarBolsaPuntos(min, max, cliente)).build();
 
     }
+
+    @GET
+    @Path("/customers/{days}")
+    public Response getCustomersByExpirationDate(@PathParam("days") Integer days){
+        return Response.ok(pointBagDAO.getCustomersByExpirationDate(days)).build();
+    }
 }

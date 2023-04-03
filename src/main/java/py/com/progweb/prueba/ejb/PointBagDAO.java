@@ -1,7 +1,6 @@
 package py.com.progweb.prueba.ejb;
 
 import py.com.progweb.prueba.dto.PointBagDTO;
-import py.com.progweb.prueba.dto.PointsReportDTO;
 import py.com.progweb.prueba.dto.UsePointsDTO;
 import py.com.progweb.prueba.model.*;
 
@@ -10,7 +9,10 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TemporalType;
 import javax.persistence.criteria.CriteriaBuilder;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -128,12 +130,12 @@ public class PointBagDAO {
             }
         }
 
-        /*
+
         try {
             this.sendMail();
         } catch (MessagingException e) {
             throw new RuntimeException(e);
-        }*/
+        }
     }
 
     private List<PointBag> getPointsByCustomerId(Integer customerId) {
@@ -179,20 +181,20 @@ public class PointBagDAO {
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.host", "smtp.live.com");
+        props.put("mail.smtp.host", "smtp.gmail.com");
         props.put("mail.smtp.port", "587");
 
         // Crear la sesión
         Session session = Session.getInstance(props, new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication("javier_lopez-1998@hotmail.com", "jotalopezcaceres1");
+                return new PasswordAuthentication("nicmarfravier@gmail.com", "Nicmarfravier02");
             }
         });
 
         // Crear el mensaje
         Message message = new MimeMessage(session);
-        message.setFrom(new InternetAddress("javier_lopez-1998@hotmail.com"));
+        message.setFrom(new InternetAddress("nicmarfravier@gmail.com"));
         message.setRecipients(Message.RecipientType.TO, InternetAddress.parse("javierlopez9805@gmail.com"));
         message.setSubject("Prueba de correo electrónico");
         message.setText("Este es un mensaje de prueba.");
@@ -215,6 +217,29 @@ public class PointBagDAO {
                 .setParameter("nro_documento", nro_documento);
 
         return (List<PointBagDTO>) q.getResultList();
+    }
+
+    private List<PointBag> getPointsByExpirationDate(Date date){
+        Query q = this.em.createQuery("select pb from PointBag pb where  date(pb.fechaCaducidad) = :fecha")
+                .setParameter("fecha", date, TemporalType.DATE);
+        return (List<PointBag>) q.getResultList();
+    }
+
+    public List<Customer> getCustomersByExpirationDate(Integer days){
+        List<Customer> customers = new ArrayList<Customer>();
+
+        LocalDate fecha = LocalDate.now().plusDays(days);
+        Date date = java.sql.Date.valueOf(fecha);
+
+        List<PointBag> pointBags = getPointsByExpirationDate(date);
+
+        for (PointBag pointBag : pointBags){
+            Customer cliente = customerDAO.getCustomerById(pointBag.getIdCliente());
+            if (!customers.contains(cliente)){
+                customers.add(cliente);
+            }
+        }
+        return customers;
     }
 
 }

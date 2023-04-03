@@ -46,4 +46,10 @@ public class CustomerDAO {
                 .setParameter("fecha", fecha, TemporalType.DATE);
         return (List<Customer>) q.getResultList();
     }
+
+    public Customer getCustomerById(Integer idCliente){
+        Query q = this.em.createQuery("select c from Customer c where c.idCliente = :id")
+                .setParameter("id",idCliente);
+        return (Customer) q.getSingleResult();
+    }
 }
