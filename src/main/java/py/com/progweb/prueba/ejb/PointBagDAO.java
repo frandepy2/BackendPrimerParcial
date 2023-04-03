@@ -129,13 +129,6 @@ public class PointBagDAO {
                 break;
             }
         }
-
-
-        try {
-            this.sendMail();
-        } catch (MessagingException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private List<PointBag> getPointsByCustomerId(Integer customerId) {
@@ -181,20 +174,20 @@ public class PointBagDAO {
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.host", "smtp.gmail.com");
+        props.put("mail.smtp.host", "smtp.office365.com");
         props.put("mail.smtp.port", "587");
 
         // Crear la sesión
         Session session = Session.getInstance(props, new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication("nicmarfravier@gmail.com", "Nicmarfravier02");
+                return new PasswordAuthentication("nicmarfravier@outlook.com", "L0smasLindosdebackend");
             }
         });
 
         // Crear el mensaje
         Message message = new MimeMessage(session);
-        message.setFrom(new InternetAddress("nicmarfravier@gmail.com"));
+        message.setFrom(new InternetAddress("nicmarfravier@outlook.com"));
         message.setRecipients(Message.RecipientType.TO, InternetAddress.parse("javierlopez9805@gmail.com"));
         message.setSubject("Prueba de correo electrónico");
         message.setText("Este es un mensaje de prueba.");
