@@ -1,5 +1,7 @@
 package py.com.progweb.prueba.ejb;
 
+import py.com.progweb.prueba.dto.PointBagDTO;
+import py.com.progweb.prueba.dto.PointsReportDTO;
 import py.com.progweb.prueba.dto.UsePointsDTO;
 import py.com.progweb.prueba.model.*;
 
@@ -8,6 +10,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -200,5 +203,18 @@ public class PointBagDAO {
         System.out.println("Mensaje enviado correctamente.");
     }
 
+
+    public List<PointBagDTO> listarBolsaPuntos(Integer min, Integer max, String nro_documento) {
+        Query q = this.em.createQuery("select new py.com.progweb.prueba.dto.PointBagDTO(pg.id, c.nombre, c.apellido, pg.fechaAsignacion, pg.fechaCaducidad, " +
+                        "pg.puntajeAsignado, pg.saldo, pg.monto, pg.estado) from PointBag pg " +
+                        "join Customer c on c.id = pg.idCliente " +
+                        "where pg.puntajeAsignado between :min and :max " +
+                        "or c.nroDocumento = :nro_documento ")
+                .setParameter("max", max)
+                .setParameter("min", min)
+                .setParameter("nro_documento", nro_documento);
+
+        return (List<PointBagDTO>) q.getResultList();
+    }
 
 }
