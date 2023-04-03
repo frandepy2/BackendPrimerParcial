@@ -1,7 +1,12 @@
 package py.com.progweb.prueba.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import py.com.progweb.prueba.serializers.PointBagDTOSerializer;
+import py.com.progweb.prueba.serializers.PointsReportDTOSerializer;
+
 import java.util.Date;
 
+@JsonSerialize(using = PointsReportDTOSerializer.class)
 public class PointsReportDTO {
 
     Integer idCabecera;
@@ -12,7 +17,14 @@ public class PointsReportDTO {
     Integer puntajeUsado;
     String concepto;
 
-    public PointsReportDTO() {
+    public PointsReportDTO(Integer idCabecera, String nombre, String apellido, Date fecha, Integer puntajeUtilizado, Integer puntajeUsado, String concepto) {
+        this.idCabecera = idCabecera;
+        this.nombre = nombre;
+        this.apellido = apellido;
+        this.fecha = fecha;
+        this.puntajeUtilizado = puntajeUtilizado;
+        this.puntajeUsado = puntajeUsado;
+        this.concepto = concepto;
     }
 
     public Integer getIdCabecera() {

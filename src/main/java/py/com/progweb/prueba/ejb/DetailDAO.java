@@ -28,7 +28,7 @@ public class DetailDAO {
     }
 
     public List<PointsReportDTO> listarPorParametros(String concepto, Date fecha, String nro_documento) {
-        Query q = this.em.createQuery("select pu.id, c.nombre, c.apellido, pu.fecha, pu.puntajeUtilizado,  d.puntajeUsado, pu.concepto from Detail d " +
+        Query q = this.em.createQuery("select new py.com.progweb.prueba.dto.PointsReportDTO(pu.id, c.nombre, c.apellido, pu.fecha, pu.puntajeUtilizado,  d.puntajeUsado, pu.concepto) from Detail d " +
                         "join PointsUse pu on pu.id = d.idCabecera " +
                         "join Customer c on c.id = pu.idCliente " +
                         "where pu.concepto = :concepto or date(pu.fecha) = :fecha " +
@@ -41,7 +41,7 @@ public class DetailDAO {
     }
 
     public List<PointsReportDTO> listarPorParametrosSinFecha(String concepto, String nro_documento) {
-        Query q = this.em.createQuery("select pu.id, c.nombre, c.apellido, pu.fecha, pu.puntajeUtilizado,  d.puntajeUsado, pu.concepto from Detail d " +
+        Query q = this.em.createQuery("select new py.com.progweb.prueba.dto.PointsReportDTO(pu.id, c.nombre, c.apellido, pu.fecha, pu.puntajeUtilizado,  d.puntajeUsado, pu.concepto) from Detail d " +
                         "join PointsUse pu on pu.id = d.idCabecera " +
                         "join Customer c on c.id = pu.idCliente " +
                         "where pu.concepto = :concepto " +
