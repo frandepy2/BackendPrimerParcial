@@ -13,6 +13,10 @@ import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
+
+import javax.mail.*;
+import javax.mail.internet.*;
 
 @Stateless
 public class PointBagDAO {
@@ -27,12 +31,12 @@ public class PointBagDAO {
     @Inject
     ConceptsPointsDAO conceptsPointsDAO;
 
-
-
-
-
     @PersistenceContext(unitName = "pruebaPU")
     private EntityManager em;
+
+    public void modificar(PointBag entidad) {
+        this.em.merge(entidad);
+    }
 
     //Carga de puntos
     public void cargarPuntos(PointBag pb) {
@@ -59,7 +63,12 @@ public class PointBagDAO {
 
     }
 
-    //Utilizar Puntos
+    public List<PointBag> getPendingPoints(){
+        Query q = this.em.createQuery("SELECT pb FROM PointBag pb WHERE pb.estado = 'PENDING'");
+        List<PointBag> results = q.getResultList();
+        return results;
+    }
+
     public void utilizarPuntos(UsePointsDTO solicitud){
         Integer idCliente = solicitud.getIdCliente();
         Integer idConcepto = solicitud.getIdConceptoPuntos();
@@ -118,6 +127,13 @@ public class PointBagDAO {
                 break;
             }
         }
+
+        /*
+        try {
+            this.sendMail();
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }*/
     }
 
     private List<PointBag> getPointsByCustomerId(Integer customerId) {
@@ -159,6 +175,35 @@ public class PointBagDAO {
         return 0;
     }
 
+    private void sendMail() throws MessagingException{
+        Properties props = new Properties();
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.host", "smtp.live.com");
+        props.put("mail.smtp.port", "587");
+
+        // Crear la sesión
+        Session session = Session.getInstance(props, new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication("javier_lopez-1998@hotmail.com", "jotalopezcaceres1");
+            }
+        });
+
+        // Crear el mensaje
+        Message message = new MimeMessage(session);
+        message.setFrom(new InternetAddress("javier_lopez-1998@hotmail.com"));
+        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse("javierlopez9805@gmail.com"));
+        message.setSubject("Prueba de correo electrónico");
+        message.setText("Este es un mensaje de prueba.");
+
+        // Enviar el mensaje
+        Transport.send(message);
+
+        System.out.println("Mensaje enviado correctamente.");
+    }
+
+
     public List<PointBagDTO> listarBolsaPuntos(Integer min, Integer max, String nro_documento) {
         Query q = this.em.createQuery("select new py.com.progweb.prueba.dto.PointBagDTO(pg.id, c.nombre, c.apellido, pg.fechaAsignacion, pg.fechaCaducidad, " +
                         "pg.puntajeAsignado, pg.saldo, pg.monto, pg.estado) from PointBag pg " +
@@ -171,4 +216,5 @@ public class PointBagDAO {
 
         return (List<PointBagDTO>) q.getResultList();
     }
+
 }
