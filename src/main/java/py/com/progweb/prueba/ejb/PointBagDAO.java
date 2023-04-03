@@ -28,12 +28,12 @@ public class PointBagDAO {
     @Inject
     ConceptsPointsDAO conceptsPointsDAO;
 
-
-
-
-
     @PersistenceContext(unitName = "pruebaPU")
     private EntityManager em;
+
+    public void modificar(PointBag entidad) {
+        this.em.merge(entidad);
+    }
 
     //Carga de puntos
     public void cargarPuntos(PointBag pb) {
@@ -60,7 +60,12 @@ public class PointBagDAO {
 
     }
 
-    //Utilizar Puntos
+    public List<PointBag> getPendingPoints(){
+        Query q = this.em.createQuery("SELECT pb FROM PointBag pb WHERE pb.estado = 'PENDING'");
+        List<PointBag> results = q.getResultList();
+        return results;
+    }
+
     public void utilizarPuntos(UsePointsDTO solicitud){
         Integer idCliente = solicitud.getIdCliente();
         Integer idConcepto = solicitud.getIdConceptoPuntos();
@@ -194,4 +199,6 @@ public class PointBagDAO {
 
         System.out.println("Mensaje enviado correctamente.");
     }
+
+
 }
