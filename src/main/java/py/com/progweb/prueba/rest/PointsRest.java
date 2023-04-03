@@ -25,17 +25,19 @@ public class PointsRest {
                                         @QueryParam("cliente") String cliente) {
         // Lógica para consultar los puntos de un cliente
         // en función del concepto de uso, fecha de uso y el cliente en sí.
+       if (fecha != null) {
+           try {
+               SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+               Date date = dateFormat.parse(fecha);
 
-        try{
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            Date date = dateFormat.parse(fecha);
-
-            return Response.ok(detailDAO.listarPorParametros(concepto, date, cliente)).build();
-        } catch (ParseException e) {
-            // Handle the parse exception
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Invalid date format. Please use yyyy-MM-dd.").build();
-        }
-
+               return Response.ok(detailDAO.listarPorParametros(concepto, date, cliente)).build();
+           } catch (ParseException e) {
+               // Handle the parse exception
+               return Response.status(Response.Status.BAD_REQUEST)
+                       .entity("Invalid date format. Please use yyyy-MM-dd.").build();
+           }
+       }else{
+           return Response.ok(detailDAO.listarPorParametrosSinFecha(concepto, cliente)).build();
+       }
     }
 }

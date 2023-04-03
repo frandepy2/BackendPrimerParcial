@@ -1,5 +1,6 @@
 package py.com.progweb.prueba.ejb;
 
+import py.com.progweb.prueba.dto.PointsReportDTO;
 import py.com.progweb.prueba.model.Detail;
 import py.com.progweb.prueba.model.PointsUse;
 
@@ -26,17 +27,29 @@ public class DetailDAO {
         return this.em.createQuery("select d from Detail d where d.idCabecera.id = :param").setParameter("param", idCabecera).getResultList();
     }
 
-    public List<Detail> listarPorParametros(String concepto, Date fecha, String nro_documento) {
-        return this.em.createQuery("select pu.id, c.nombre, c.apellido, pu.puntajeUtilizado, d.fecha, d.puntajeUsado from Detail d " +
+    public List<PointsReportDTO> listarPorParametros(String concepto, Date fecha, String nro_documento) {
+        Query q = this.em.createQuery("select pu.id, c.nombre, c.apellido, pu.fecha, pu.puntajeUtilizado,  d.puntajeUsado, pu.concepto from Detail d " +
                         "join PointsUse pu on pu.id = d.idCabecera " +
                         "join Customer c on c.id = pu.idCliente " +
-                        "where pu.concepto = :concepto and date(pu.fecha) = :fecha" +
-                        "and c.nroDocumento = :nro_documento ")
+                        "where pu.concepto = :concepto or date(pu.fecha) = :fecha " +
+                        "or c.nroDocumento = :nro_documento ")
                 .setParameter("concepto", concepto)
                 .setParameter("fecha", fecha, TemporalType.DATE)
-                .setParameter("nro_documento", nro_documento)
-                .getResultList();
+                .setParameter("nro_documento", nro_documento);
 
+        return (List<PointsReportDTO>) q.getResultList();
+    }
+
+    public List<PointsReportDTO> listarPorParametrosSinFecha(String concepto, String nro_documento) {
+        Query q = this.em.createQuery("select pu.id, c.nombre, c.apellido, pu.fecha, pu.puntajeUtilizado,  d.puntajeUsado, pu.concepto from Detail d " +
+                        "join PointsUse pu on pu.id = d.idCabecera " +
+                        "join Customer c on c.id = pu.idCliente " +
+                        "where pu.concepto = :concepto " +
+                        "or c.nroDocumento = :nro_documento ")
+                .setParameter("concepto", concepto)
+                .setParameter("nro_documento", nro_documento);
+
+        return (List<PointsReportDTO>) q.getResultList();
     }
 
 }
